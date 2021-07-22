@@ -19,7 +19,7 @@
         location: "Manchester",
         price: 175,
         spaces: 5,
-        image: "image/re.png"
+        image: "images/re.png"
     }, {
         id: 3,
         title: "Chinese",
