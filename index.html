@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title 
+    ">After School lessons </title>
+    <!-- importing vue package -->
+    <script src="https://unpkg.com/vue"></script>
+    <!-- link to manifest file -->
+    <!--<link rel="manifest" href="schoolclub.webmanifest">-->
+    <!-- importing external js file for lessons data -->
+    <script src='lessons.js'></script>
+</head>
+
+<body>
+    <!-- app div -->
+    <div id="app" style="margin:auto; padding-left:550px;">
+        <h1 v-text="sitename"></h1>
+        <span>Your Shopping Cart - </span><span v-text=cart></span>
+        <h1></h1>
+        <div id="cartButton"><button v-on:click='showCheckout'>Checkout</button></div>
+        <h1></h1>
+        <!-- sorting options -->
+        <div id='sorting'>
+            <label for="type">Sort By : </label>
+            <input type="radio" id="subject" name="sort" value="title" autocomplete="off">
+            <label>Subject</label>
+            <input type="radio" id="location" name="sort" value="location" autocomplete="off">
+            <label>Location</label>
+            <input type="radio" id="price" name="sort" value="price" autocomplete="off">
+            <label>Price</label>
+            <input type="radio" id="availability" name="sort" value="spaces" autocomplete="off">
+            <label>Availability</label>
+        </div>
+        <h2></h2>
+        <label for="order">Order : </label>
+        <input type="radio" id="ascending" name="order" value="1" autocomplete="off">
+        <label for="ascending">Ascending</label>
+        <input type="radio" id="descending" name="order" value="-1" autocomplete="off">
+        <label for="descending">Descending</label>
+        <h2></h2>
+        <button v-on:click="sortArray">Sort</button>
+
+        <h1></h1>
+
+        <!-- displaying lessons -->
+        <div v-if='showProduct'>
+            <div v-for="array in lessons">
+                <div style="border:solid; height:200px; width:350px; color: blue
+                ;">
+                    <div style="float:left;">
+                        <img style="height: 120px; width: 120px; object-fit: contain;" v-bind:src="array.image">
+                    </div>
+                    <div style="float:left;">
+                        <h2 v-text="array.title"></h2>
+                        <p v-text="array.location"></p>
+                        <p style="display:inline">Price: £</p>
+                        <span v-text="array.price">
+                    </span>
+                        <br><br>
+                        <p style="display:inline">Number of spaces: </p>
+                        <span v-text="array.spaces">
+                    </span>
+                        <br><br>
+                        <div id="addtocartbtn" >
+                            <button v-bind:id="lessons.indexOf(array)" v-on:click="addToCart($event)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <h1></h1>
+            </div>
+        </div>
+        <div v-else> 
+            <h2>Checkout</h2>
+            <p>
+            <strong>First Name:</strong>
+            <!-- This input field is bound to 'firstName' in the 'order' object -->
+            <input id="fnameinput" type="text" v-model.trim="order.firstName" onkeyup="manage(this)" required/>
+            </p>
+            <p>
+            <strong>Last Name:</strong>
+            <!-- This input field is bound to 'lastName' in the 'order' object -->
+            <input id="lnameinput" type="text" v-model.trim="order.lastName" onkeyup="manage(this)" required/>
+            </p>
+            <p>
+                <strong>Phonenumber:</strong>
+                <!-- This input field is bound to 'lastName' in the 'order' object -->
+                <input id="pnuminput" type="tel" max="11" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" v-model.trim="order.phonenumber" onkeypress="return isNumber(event)" onkeyup="manage(this)" required/>
+                </p>
+            <p><strong>Address:</strong> <input v-model="order.address"/></p>
+            <p><strong>City:</strong> <input v-model="order.city"/></p>
+            <p>
+            <strong>State:</strong>
+            <select v-model="order.state">
+            <option disabled value="">State</option>
+            <option>AL</option>
+            <option>AR</option>
+            <option>CA</option>
+            <option>NV</option>
+            </select>
+            </p>
+            <p><strong>Zip/Postal Code:</strong> <input v-model="order.zip"/></p>
+
+            <p>
+                <input type="checkbox" id="gift"  v-model="order.gift" :true-value="order.sendGift" :false-value="order.dontSendGift">
+                <label for="gift">Ship As Gift?</label>
+            </p>
+            <p>
+                <input type="radio" id="home" value="Home" v-model="order.method">
+                <label for="home">Home</label>
+                <input type="radio" id="business" value="Business" v-model="order.method">
+                <label for="business">Business</label>
+            </p>
+        
+            <h2>Order Information</h2>
+            <p>First Name: {{order.firstName}}</p>
+            <p>Last Name: {{order.lastName}}</p> 
+            <p>Phonenumber: {{order.phonenumber}}</p> 
+            <p>Address: {{order.address}}</p>
+            <p>City: {{order.city}}</p>
+            <p>Zip: {{order.zip}}</p>
+            <p>State: {{order.state}}</p>
+            
+            <p>Ship as Gift: {{order.gift}}</p>
+            <p>Method: {{order.method}}</p>
+
+            <div id="submitbtn">
+                <input type="submit" id="sbtn" v-on:click="submitForm" disabled/>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        localStorage.clear(); //clearing localstorage 
+        document.getElementById('cartButton').style.display = "none"; //disabling the cart button until a lesson is added to card
+        let app = new Vue({ //vue instance
+            el: '#app',
+            data: {
+                lessons: lessons,
+                sitename: "After School Lessons",
+                cart: [],
+                showProduct: true,
+                order:{
+                    firstName:'',
+                    lastName:'',
+                    phonenumber:'',
+                    address:'',
+                    city:'',
+                    zip:'',
+                    state:'',
+                    method: 'Home',
+                    gift: 'Do not send as a gift',
+                    sendGift: 'Send as a gift',
+                    dontSendGift: 'Do not send as a gift',
+                },
+                states: {
+                    AL: 'Alabama',
+                    AR: 'Arizona',
+                    CA: 'California',
+                    NV: 'Nevada'
+                },
+            },
+            methods: {
+                addToCart(event) {
+                    if (this.cart != 'undefined') {
+                        document.getElementById('cartButton').style.display = "block";
+                    }
+                    id = event.currentTarget.id;
+                    if (this.lessons[id].spaces > 0) { //button only works if there are enough spaces
+                        this.lessons[id].spaces -= 1; //substract one space
+                        if (this.lessons[id].spaces == 0) {
+                        document.getElementById("addtocartbtn").innerHTML = "<button disabled>Add to cart</button>";
+                    }
+
+                      if (this.cart.includes(this.lessons[id].title)) {
+                            let x = localStorage.getItem(this.lessons[id].title); //getting the localstorage item
+                            let newObj = JSON.parse(x); //parsing the JSON string
+                            newObj.spaces++; //adding one to the spaces of the item in cart
+                            localStorage.setItem(this.lessons[id].title, JSON.stringify(newObj)); //setting the new updated JSON string
+                        } else {
+                            this.cart.push(this.lessons[id].title); //add lesson to cart array
+                            localStorage.setItem(this.lessons[id].title, JSON.stringify(this.lessons[id])); //create local storage for the particular lesson
+                            let x = localStorage.getItem(this.lessons[id].title); //getting the localstorage item
+                            let newObj = JSON.parse(x); //parsing the JSON string
+                            newObj.spaces = 1; //adding one to the spaces of the item in cart
+                            localStorage.setItem(this.lessons[id].title, JSON.stringify(newObj)); //setting the new updated JSON string
+                        }
+                    }
+
+                },
+                showCheckout() {
+                    if (this.showProduct) this.showProduct = false;
+                    else this.showProduct = true;
+                }, 
+                submitForm(){ 
+                    document.getElementById("submitbtn").innerHTML = "<h3>Order has been Submitted!</h3>";   
+                },
+                sortArray: function() {
+
+                    //sort by subject
+                    function subSort(a, b) {
+                        if (a.title < b.title)
+                            return -1;
+                        if (a.title > b.title)
+                            return 1;
+                        return 0;
+                    }
+
+                    //sort by location
+                    function locSort(a, b) {
+                        if (a.location < b.location)
+                            return -1;
+                        if (a.location > b.location)
+                            return 1;
+                        return 0;
+                    }
+
+                    //sort by price
+                    function priceSort(a, b) {
+                        if (a.price < b.price)
+                            return -1;
+                        if (a.price > b.price)
+                            return 1;
+                        return 0;
+                    }
+
+                    // sort by spaces
+                    function spacesSort(a, b) {
+                        if (a.spaces < b.spaces)
+                            return -1;
+                        if (a.spaces > b.spaces)
+                            return 1;
+                        return 0;
+                    }
+
+                    let subject = document.getElementById('subject');
+                    let location = document.getElementById('location');
+                    let price = document.getElementById('price');
+                    let stock = document.getElementById('availability');
+
+                    let asc = document.getElementById('ascending');
+                    let desc = document.getElementById('descending');
+
+                    //sorting the lessons in terms of what radio buttons are selected for sorting
+                    if (subject.checked && asc.checked) {
+                        return this.lessons.sort(subSort);
+                    } else if (subject.checked && desc.checked) {
+                        this.lessons.sort(subSort);
+                        return this.lessons.reverse();
+                    } else if (location.checked && asc.checked) {
+                        return this.lessons.sort(locSort);
+                    } else if (location.checked && desc.checked) {
+                        this.lessons.sort(locSort);
+                        return this.lessons.reverse();
+                    } else if (price.checked && asc.checked) {
+                        return this.lessons.sort(priceSort);
+                    } else if (price.checked && desc.checked) {
+                        this.lessons.sort(priceSort);
+                        return this.lessons.reverse();
+                    } else if (stock.checked && asc.checked) {
+                        return this.lessons.sort(spacesSort);
+                    } else if (stock.checked && desc.checked) {
+                        this.lessons.sort(spacesSort);
+                        return this.lessons.reverse();
+                    }
+
+                },
+            },
+        })
+
+        //This checks if the first name/last name and phone number have been entered. If they have then the submit button is enabled;
+        function manage(txt) {
+            var fname = document.getElementById("fnameinput").value; //get value entered in firstname;
+            var lname = document.getElementById("lnameinput").value; //get value entered in lastname;
+            var pnum = document.getElementById("pnuminput").value; //get value entered in phonenumber;
+            var bt = document.getElementById('sbtn');
+            if (txt.value != '' && fname != '' && lname != '' && pnum != '') {
+                bt.disabled = false; //enable submit button;
+            }
+            else {
+                bt.disabled = true; //diable submit button;
+            }
+        }
+
+        //This only allows numbers to be entered in the phonenumber field;
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+
+</body>
+
+</html>
