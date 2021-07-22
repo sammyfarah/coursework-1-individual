@@ -12,7 +12,7 @@
         location: "Leeds",
         price: 100,
         spaces: 5,
-        image: ""
+        image: "images/eng.png"
     }, {
         id: 2,
         title: "Religous Education",
@@ -26,47 +26,47 @@
         location: "Yorkshire",
         price: 250,
         spaces: 5,
-        image: ""
+        image: "images/chinese.jpg"
     }, {
         id: 4,
         title: "Spanish",
         location: "Birmingham",
         price: 200,
         spaces: 5,
-        image: ""
+        image: "images/spanish.png"
     }, {
         id: 5,
         title: "Physical Education",
         location: "Nottingham",
         price: 100,
         spaces: 5,
-        image: ""
+        image: "images/pe.png"
     }, {
         id: 6,
         title: "Music",
         location: "Sheffield",
         price: 390,
         spaces: 5,
-        image: ""
+        image: "images/music.png"
     }, {
         id: 7,
         title: "Science",
         location: "Belfast",
         price: 280,
         spaces: 5,
-        image: ""
+        image: "images/science.png"
     }, {
         id: 8,
         title: "Geography",
         location: "Edinborough",
         price: 150,
         spaces: 5,
-        image: ""
+        image: "images/geo.jpg"
     }, {
         id: 9,
         title: "History",
         location: "Wales",
         price: 200,
         spaces: 5,
-        image: ""
+        image: "images/history.jpg"
     }]
